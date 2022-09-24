@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
+int test = 0;
 class MainTab extends StatefulWidget {
   const MainTab({Key? key}) : super(key: key);
 
