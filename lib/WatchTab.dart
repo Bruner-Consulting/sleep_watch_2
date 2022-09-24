@@ -362,7 +362,7 @@ class _WatchTabState extends State<WatchTab> {
                   //right now can only enter email, does not send nor validate
                   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 8),
                   child: Text(
-                    "Specify e-mail address to send data to, then press button below to download watch and initiate email.",
+                    "Specify e-mail address, then press button to download watch and initiate email.",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -402,7 +402,7 @@ class _WatchTabState extends State<WatchTab> {
                 icon: const Icon(Icons.download, size: 30),
                 label: const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Text('Download & \n Send Data',
+                  child: Text('Download & Send Data',
                       style: TextStyle(fontSize: 22)),
                 ),
                 onPressed: () {
