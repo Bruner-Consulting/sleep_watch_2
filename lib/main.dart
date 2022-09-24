@@ -5,6 +5,7 @@ import 'package:sleepwatch2/ChartTab.dart';
 import 'package:sleepwatch2/SleepTab.dart';
 import 'package:sleepwatch2/WatchTab.dart';
 
+int test = 1;
 void main() async {
   runApp(const MyApp());
 }
@@ -77,52 +78,55 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-          appBar: AppBar(
-            title: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: const Text(
-                'SleepWatch 2.0',
-              ),
-            ),
-
-            actions: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "v 1.0.3 ",
-                      //+ packageInfo.version,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            bottom: TabBar(
-              tabs: [
-                Tab(text: 'Watch',),
-                Tab(text: 'Sleep',),
-                Tab(text: 'Chart',)
-              ],
+        appBar: AppBar(
+          title: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: const Text(
+              'SleepWatch 2.0',
             ),
           ),
-          body: TabBarView(
-            children: [
-              WatchTab(),
-              SleepTab(),
-              ChartTab(),
-
+          actions: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "v 1.0.3 ",
+                    //+ packageInfo.version,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                text: 'Watch',
+              ),
+              Tab(
+                text: 'Sleep',
+              ),
+              Tab(
+                text: 'Chart',
+              )
             ],
           ),
+        ),
+        body: TabBarView(
+          children: [
+            WatchTab(),
+            SleepTab(),
+            ChartTab(),
+          ],
+        ),
       ),
     );
   }
