@@ -1,5 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sleep_watch_2">
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
    <application
         android:label="sleep_watch_2"
         android:name="${applicationName}"
