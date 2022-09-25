@@ -81,7 +81,7 @@ class _WatchTabState extends State<WatchTab> {
           print("found }");
           //print(myBuffer);
           await writeFile();
-          //readFile();
+          readFile();
           if (myFile == "zcm.txt") {
             num_chars = 0;
             myFile = "demo.pvt";
@@ -89,8 +89,14 @@ class _WatchTabState extends State<WatchTab> {
             print("sending pvtDl();");
             _sendData('pvtDl();\n');
           } else if (myFile == "demo.pvt") {
-            _disconnect();
+            print("send email");
             send_email();
+            myFile = "blank.txt";
+            print("sending zcmStart");
+            _sendData('zcmStart();\n');
+          } else if (myFile == "blank.txt") {
+            print("disconnecting");
+            _disconnect();
           }
         } else {
           num_chars++;
@@ -168,26 +174,24 @@ class _WatchTabState extends State<WatchTab> {
   Future<void> send_email() async {
     final path = await _localPath;
     List<String> myattachment = ['$path/zcm.txt', '$path/demo.pvt'];
-    if (myFile == 'demo.pvt') {
-      print("Attachments for email");
-      print(myattachment);
-      final Email email = Email(
-        body: 'Downloaded data from SleepWatch',
-        subject: 'SleepWatch Data',
-        recipients: [
-          "marty@bruner-consulting.com",
-          "jordan@bruner-consulting.com",
-          "tomk@ambulatory-monitoring.com"
-        ],
-        attachmentPaths: myattachment,
-        isHTML: false,
-      );
-      try {
-        await FlutterEmailSender.send(email);
-        print('success');
-      } catch (error) {
-        print(error.toString());
-      }
+    print("Attachments for email");
+    print(myattachment);
+    final Email email = Email(
+      body: 'Downloaded data from SleepWatch',
+      subject: 'SleepWatch Data',
+      recipients: [
+        "marty@bruner-consulting.com",
+        "jordan@bruner-consulting.com",
+        "tomk@ambulatory-monitoring.com"
+      ],
+      attachmentPaths: myattachment,
+      isHTML: false,
+    );
+    try {
+      await FlutterEmailSender.send(email);
+      print('success');
+    } catch (error) {
+      print(error.toString());
     }
   }
 
