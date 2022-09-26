@@ -91,12 +91,14 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           actions: [
+
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+
                   Text(
                     "v 1.0.3 ",
                     //+ packageInfo.version,
@@ -105,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+            IconButton(onPressed: (){}, icon: Icon(Icons.settings)),
           ],
           bottom: TabBar(
             tabs: [
