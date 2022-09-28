@@ -361,57 +361,63 @@ class _WatchTabState extends State<WatchTab> {
                     padding: EdgeInsets.all(4.0),
                   ),
                 ),
-                const Padding(
-                  //THIS AREA FOR EMAIL ADDRESS FOR SENDING DATA FILES
-                  //right now can only enter email, does not send nor validate
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                  child: Text(
-                    "Specify e-mail address, then press button to download watch and initiate email.",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                  child: TextField(
-                    //    controller: Email_Controller,
-                    cursorColor: Colors.grey,
-                    cursorHeight: 30,
-                    maxLines: 1,
-                    maxLength: 50,
-                    style: const TextStyle(fontWeight: FontWeight.normal),
-                    //style: Theme.of(context).textTheme.headline6,
-                    decoration: const InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 2),
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
-                    ),
-                    onChanged: (String value) {
-                      // final email = value;
-                    },
-                  ),
-                ), //END OF EMAIL AREA
+                // const Padding(
+                //   //THIS AREA FOR EMAIL ADDRESS FOR SENDING DATA FILES
+                //   //right now can only enter email, does not send nor validate
+                //   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+                //   child: Text(
+                //     "Specify e-mail address, then press button to download watch and initiate email.",
+                //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                //   ),
+                // ),
+                // Padding(
+                //   padding:
+                //       const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                //   child: TextField(
+                //     //    controller: Email_Controller,
+                //     cursorColor: Colors.grey,
+                //     cursorHeight: 30,
+                //     maxLines: 1,
+                //     maxLength: 50,
+                //     style: const TextStyle(fontWeight: FontWeight.normal),
+                //     //style: Theme.of(context).textTheme.headline6,
+                //     decoration: const InputDecoration(
+                //       focusedBorder: OutlineInputBorder(
+                //         borderSide: BorderSide(color: Colors.grey, width: 2),
+                //         borderRadius: BorderRadius.all(Radius.circular(16)),
+                //       ),
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                //       ),
+                //     ),
+                //     onChanged: (String value) {
+                //       // final email = value;
+                //     },
+                //   ),
+                // ), //END OF EMAIL AREA
               ],
             ),
           ), // User Notes
 
           Column(
             children: [
-              ElevatedButton.icon(
-                style: const ButtonStyle(),
-                icon: const Icon(Icons.download, size: 30),
-                label: const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Download & Send Data',
-                      style: TextStyle(fontSize: 22)),
+              Container(
+                constraints: BoxConstraints(
+                    minWidth: (MediaQuery.of(context).size.width -
+                        100) /
+                        4),
+                child: ElevatedButton.icon(
+                  style: const ButtonStyle(),
+                  icon: const Icon(Icons.download, size: 30),
+                  label: const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('Download & Send Data',
+                        style: TextStyle(fontSize: 22)),
+                  ),
+                  onPressed: () {
+                    _startScan();
+                  },
                 ),
-                onPressed: () {
-                  _startScan();
-                },
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(8, 16, 8, 0),
@@ -424,8 +430,10 @@ class _WatchTabState extends State<WatchTab> {
               Padding(
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 32),
                   child: Container(
+                    constraints: BoxConstraints(
+                        minWidth: (MediaQuery.of(context).size.width)),
                     // width: 300,
-                    height: 50,
+                    height: 150,
                     decoration: ShapeDecoration(
                         color: Theme.of(context).highlightColor,
                         // color: Colors.white,
@@ -435,9 +443,13 @@ class _WatchTabState extends State<WatchTab> {
                               width: 1,
                               color: Theme.of(context).colorScheme.primary,
                             ))),
-                    child: const Center(
-                        child: Text("communication status",
-                            style: TextStyle(fontSize: 18))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(scrollDirection: Axis.vertical,
+                        child: Text("communication status\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Finis.",
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                   )),
             ],
           ),

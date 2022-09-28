@@ -11,7 +11,7 @@
         </intent>
     </queries>
    <application
-        android:label="sleep_watch_2"
+        android:label="SleepWatch2"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
