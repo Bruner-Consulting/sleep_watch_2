@@ -39,6 +39,9 @@ class _WatchTabState extends State<WatchTab> {
   String _logTexts = "";
   List<String> _receivedData = [];
   int _numberOfMessagesReceived = 0;
+  String textData = "";
+  bool downloading = false;
+  String downloadText = 'Download & Send Data';
 
   void initState() {
     super.initState();
@@ -49,9 +52,16 @@ class _WatchTabState extends State<WatchTab> {
     setState(() {});
   }
 
+  void updateCommStatus(String data) {
+    setState(() {
+      textData = "$textData$data\n";
+    });
+  }
+
   void _sendData(String command) async {
     //var files = ["zcmDl();", "pvtDl();"];
-    print("sending command => " + command);
+    print("sending command => $command");
+    updateCommStatus("sending command => $command");
     await flutterReactiveBle.writeCharacteristicWithResponse(_rxCharacteristic,
         value: command.codeUnits);
   }
@@ -66,6 +76,7 @@ class _WatchTabState extends State<WatchTab> {
   void onNewReceivedData(List<int> data) async {
     _numberOfMessagesReceived += 1;
     String testStr = String.fromCharCodes(data);
+    updateCommStatus("incoming data => $testStr");
     for (var i = 0; i < data.length; i++) {
       var character = data[i];
       var stringCharacter = String.fromCharCode(character);
@@ -73,12 +84,14 @@ class _WatchTabState extends State<WatchTab> {
       if (!inFile) {
         if (stringCharacter == "{") {
           print("found {");
+          updateCommStatus("found {");
           inFile = true;
         }
       } else {
         if (stringCharacter == "}") {
           inFile = false;
           print("found }");
+          updateCommStatus("found }");
           //print(myBuffer);
           await writeFile();
           readFile();
@@ -87,16 +100,23 @@ class _WatchTabState extends State<WatchTab> {
             myFile = "demo.pvt";
             myBuffer = '';
             print("sending pvtDl();");
+            updateCommStatus("sending pvtDl();");
             _sendData('pvtDl();\n');
           } else if (myFile == "demo.pvt") {
             print("send email");
+            updateCommStatus("send email");
             send_email();
             myFile = "blank.txt";
             print("sending zcmStart");
-            _sendData('zcmStart();\n');
+            updateCommStatus("sending zcmStart");
+            _sendData('restartZCM();\n');
           } else if (myFile == "blank.txt") {
             print("disconnecting");
+            updateCommStatus("disconnecting");
             _disconnect();
+            setState(() {
+              downloading = false;
+            });
           }
         } else {
           num_chars++;
@@ -159,11 +179,11 @@ class _WatchTabState extends State<WatchTab> {
     } catch (e) {
       print(e);
     }
-    print("writing file " + myFile);
+    print("writing file $myFile");
     try {
       // force a file creation
       file.writeAsStringSync("");
-      file.writeAsStringSync(myBuffer + "\r\n", mode: FileMode.append);
+      file.writeAsStringSync("$myBuffer\r\n", mode: FileMode.append);
     } catch (e) {
       print("error writing file");
     }
@@ -235,13 +255,16 @@ class _WatchTabState extends State<WatchTab> {
       _scanning = true;
       refreshScreen();
       print("starting scan...");
+      updateCommStatus("starting scan...");
       _scanStream = flutterReactiveBle
           .scanForDevices(withServices: [_UART_UUID]).listen((device) async {
         if (_foundBleUARTDevices.every((element) => element.id != device.id)) {
           _foundBleUARTDevices.add(device);
-          print(device.name + "  " + device.id);
+          print("${device.name}  ${device.id}");
+          updateCommStatus("${device.name}  ${device.id}");
           if (device.name.contains('Bangle.js')) {
             print("found Bangle");
+            updateCommStatus("found Bangle");
             await _scanStream.cancel();
             onConnectDevice(device);
           }
@@ -250,6 +273,7 @@ class _WatchTabState extends State<WatchTab> {
       }, onError: (Object error) {
         _logTexts = "${_logTexts}ERROR while scanning:$error \n";
         print("Error in Scan");
+        updateCommStatus("Error in Scan");
         refreshScreen();
       });
     } else {
@@ -272,6 +296,7 @@ class _WatchTabState extends State<WatchTab> {
           {
             _logTexts = "${_logTexts}Connecting to $id\n";
             print("attempting to connect to=> " + device.name);
+            updateCommStatus("attempting to connect to=> " + device.name);
             break;
           }
         case DeviceConnectionState.connected:
@@ -279,6 +304,7 @@ class _WatchTabState extends State<WatchTab> {
             _connected = true;
             _logTexts = "${_logTexts}Connected to $id\n";
             print("connected to $id");
+            updateCommStatus("connected to $id");
             _numberOfMessagesReceived = 0;
             _receivedData = [];
             _txCharacteristic = QualifiedCharacteristic(
@@ -297,6 +323,7 @@ class _WatchTabState extends State<WatchTab> {
                 characteristicId: _UART_RX,
                 deviceId: event.deviceId);
             print("sending command");
+            updateCommStatus("sending zcmDl();");
             _sendData('zcmDl();\n');
             break;
           }
@@ -314,6 +341,14 @@ class _WatchTabState extends State<WatchTab> {
       }
       refreshScreen();
     });
+  }
+
+  Widget myWidget() {
+    if (!downloading) {
+      return const Text('Download & Send Data', style: TextStyle(fontSize: 16));
+    } else {
+      return const Text('Downloading ', style: TextStyle(fontSize: 16));
+    }
   }
 
   @override
@@ -403,19 +438,29 @@ class _WatchTabState extends State<WatchTab> {
             children: [
               Container(
                 constraints: BoxConstraints(
-                    minWidth: (MediaQuery.of(context).size.width -
-                        100) /
-                        4),
+                    minWidth: (MediaQuery.of(context).size.width - 100) / 4),
                 child: ElevatedButton.icon(
                   style: const ButtonStyle(),
                   icon: const Icon(Icons.download, size: 30),
-                  label: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('Download & Send Data',
-                        style: TextStyle(fontSize: 22)),
-                  ),
+                  label: !downloading
+                      ? const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text('Synchronize and Send Data',
+                              style: TextStyle(fontSize: 16)),
+                        )
+                      : const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text('Synchronizing',
+                              style: TextStyle(fontSize: 16))),
                   onPressed: () {
-                    _startScan();
+                    if (!downloading) {
+                      setState(() {
+                        downloading = true;
+                      });
+                      textData = "";
+                      myFile = "zcm.txt";
+                      _startScan();
+                    }
                   },
                 ),
               ),
@@ -445,9 +490,9 @@ class _WatchTabState extends State<WatchTab> {
                             ))),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(scrollDirection: Axis.vertical,
-                        child: Text("communication status\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Finis.",
-                            style: TextStyle(fontSize: 18)),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Text(textData, style: TextStyle(fontSize: 18)),
                       ),
                     ),
                   )),
